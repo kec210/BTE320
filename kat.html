@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Kat Memory Game</title>
+<style>
+body{
+font-family:Arial;
+text-align:center;
+background:#f4f4f4;
+}
+h1{margin-top:20px;}
+.board{
+width:420px;
+margin:20px auto;
+display:grid;
+grid-template-columns:repeat(4,90px);
+gap:10px;
+}
+.card{
+width:90px;
+height:90px;
+background:#0078D4;
+color:white;
+font-size:36px;
+display:flex;
+justify-content:center;
+align-items:center;
+cursor:pointer;
+border-radius:10px;
+}
+.flipped{
+background:white;
+color:black;
+border:2px solid #0078D4;
+}
+</style>
+</head>
+<body>
+
+<h1>Kat Memory Card Game</h1>
+
+<p>
+Match two identical emoji cards. Click two cards at a time.
+If they match, they stay open. Match all pairs to win.
+</p>
+
+<p>
+Game inspired by:
+<a href="https://github.com/" target="_blank">https://github.com/</a>
+</p>
+
+<p><b>Moves:</b> <span id="moves">0</span></p>
+
+<div class="board" id="board"></div>
+
+<h2 id="win"></h2>
+
+<script>
+const emojis=["🍕","🍕","🐶","🐶","🌴","🌴","🚗","🚗","🎮","🎮","💎","💎","🔥","🔥","⚽","⚽"];
+
+emojis.sort(()=>0.5-Math.random());
+
+let first=null;
+let second=null;
+let lock=false;
+let moves=0;
+let matches=0;
+
+const board=document.getElementById("board");
+
+emojis.forEach(icon=>{
+let card=document.createElement("div");
+card.className="card";
+card.dataset.icon=icon;
+card.innerHTML="?";
+card.onclick=flip;
+board.appendChild(card);
+});
+
+function flip(){
+if(lock || this===first || this.classList.contains("flipped")) return;
+
+this.innerHTML=this.dataset.icon;
+this.classList.add("flipped");
+
+if(!first){
+first=this;
+return;
+}
+
+second=this;
+moves++;
+document.getElementById("moves").innerHTML=moves;
+
+if(first.dataset.icon===second.dataset.icon){
+matches++;
+first=null;
+second=null;
+
+if(matches===8){
+document.getElementById("win").innerHTML="You Win!";
+}
+}else{
+lock=true;
+setTimeout(()=>{
+first.innerHTML="?";
+second.innerHTML="?";
+first.classList.remove("flipped");
+second.classList.remove("flipped");
+first=null;
+second=null;
+lock=false;
+},800);
+}
+}
+</script>
+
+</body>
+</html>
